@@ -1,0 +1,99 @@
+import kotlin.math.*
+
+fun Exp(expression: String): List<String> {
+    val pattern = "(\\d+\\.)?\\d+|\\(|\\)|\\+|\\-|\\*|\\/|\\^|sin".toRegex()
+
+    return pattern.findAll(expression).map { it.value }.toList()
+}
+
+fun infixtopostfix(input: String): List<String> {
+    println("Инфикс:  $input")
+    val infixExpression = Exp(input)
+
+    val number = mapOf("+" to 1, "-" to 1, "*" to 2, "/" to 2, "^" to 3, "sin" to 3)
+    val postfixExpression = mutableListOf<String>()
+    val stack = mutableListOf<String>()
+
+    for (c in infixExpression) {
+        val numbers = c.matches("-?\\d+(\\.\\d+)?".toRegex())
+
+        if (numbers) postfixExpression.add(c)
+        else {
+            when (c) {
+                "(" -> {
+                    stack.add(c)
+                }
+                ")" -> {
+                    while (stack.last() != "(")
+                        postfixExpression.add(stack.removeLast())
+                    stack.removeLast()
+                }
+                else -> {
+                    while ((stack.isNotEmpty()) &&
+                        (stack.last() != "(") &&
+                        (number.getValue(c) <= number.getValue(stack.last())))
+                        postfixExpression.add(stack.removeLast())
+                    stack.add(c)
+                }
+            }
+        }
+    }
+    while (stack.isNotEmpty()) {
+        postfixExpression.add(stack.removeLast())
+    }
+    print("постфикс: ")
+    println(postfixExpression.joinToString(" "))
+    return postfixExpression.toList()
+}
+
+fun calc(list: List<String>): Float {
+    val stack = mutableListOf<Float>()
+    var result: Float
+    var putaside: Float
+    for (i in list) {
+        when(i) {
+            "+" -> {
+                result = stack.removeLast()
+                result += stack.removeLast()
+                stack.add(result)
+            }
+            "-" -> {
+                putaside = stack.removeLast()
+                result = stack.removeLast() - putaside
+                stack.add(result)
+            }
+            "*" -> {
+                result = stack.removeLast()
+                result *= stack.removeLast()
+                stack.add(result)
+            }
+            "/" -> {
+                putaside = stack.removeLast()
+                result = stack.removeLast() / putaside
+                stack.add(result)
+            }
+            "^" -> {
+                putaside = stack.removeLast()
+                result = stack.removeLast().pow(putaside)
+                stack.add(result)
+            }
+            "sin" -> {
+                result = sin(stack.removeLast())
+                stack.add(result)
+            }
+            else -> {
+                stack.add(i.toFloat())
+            }
+        }
+    }
+    print("Результат: ")
+    println(stack[0])
+
+    return stack[0]
+}
+fun main() {
+    var postfixList = infixtopostfix("21 - 14 + 18 / sin (2 ^ 3)")
+    calc(postfixList)
+    println()
+
+}
