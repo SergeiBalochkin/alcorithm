@@ -1,0 +1,48 @@
+class LinkedNode(var value: Int) {
+    var prev: LinkedNode? = null
+    var next: LinkedNode? = null
+    }
+fun insertToHead(head: LinkedNode): LinkedNode {
+    var first: LinkedNode = head
+    val oldFirst: LinkedNode = head
+    first = LinkedNode(value = 6)
+    oldFirst.prev = first
+    first.next = oldFirst
+    return first
+}
+fun deleteToHead(head: LinkedNode): LinkedNode? {
+    var first: LinkedNode? = head
+    first = first?.next
+    first?.prev = null
+    return first
+}
+fun insertToTail(head: LinkedNode): LinkedNode? {
+    var last = getTailNode(head)
+    val oldLast = last
+    last = LinkedNode(value = 4)
+    oldLast?.next = last
+    last.prev = oldLast
+    return head
+}
+fun deleteToTail(head:LinkedNode): LinkedNode? {
+    var last = hetTailNode(head)
+    val oldLast = last
+    last = last?.prev
+    last?.next = nill
+    return last
+}
+fun insertToOther(head: LinkedNode): LinkedNode? {
+    val current = getInsertPrevNode(head)
+    val newNode = LinkedNode(value = 6)
+    newNode.next = current?.next
+    newNode.prev = current
+    current?.next = newNode
+    current?.next?.prev = newNode
+    return head
+}
+fun deleteToOther(head: LinkedNode): LinkedNode? {
+    val current = getDeletePrevNode(head)
+    current?.next = current?.next?.next
+    current?.next?.prev = current
+    return head
+}
